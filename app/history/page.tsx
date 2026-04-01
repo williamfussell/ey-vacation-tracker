@@ -52,14 +52,14 @@ export default function HistoryPage() {
             <div className="flex items-center gap-2.5">
               <img src="/ey-logo.png" alt="EY" className="h-7 w-auto" />
               <span className="text-[14px] font-semibold text-[#111] tracking-tight">FlexiGenAI Team Tracker</span>
-              <div className="h-4 w-px bg-black/[.08]" />
-              <span className="text-[13px] font-medium text-[#999]">History</span>
+            </div>
+            <div className="h-4 w-px bg-black/[.08]" />
+            <div className="flex items-center gap-1">
+              <Link href="/dashboard" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Dashboard</Link>
+              <Link href="/" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Calendar</Link>
+              <Link href="/history" className="text-[12px] font-semibold text-[#111] px-3 py-1.5 rounded-md bg-black/[.04]">History</Link>
             </div>
           </div>
-          <Link href="/" className="btn btn-ghost text-[12px]">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-            Back
-          </Link>
         </div>
       </header>
 

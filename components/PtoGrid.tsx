@@ -32,17 +32,26 @@ const TEAM_COLORS: Record<string, string> = {
   DevOps: "#10B981",
 };
 
+// Start at current week, extend 52 weeks forward
+const INITIAL_WEEKS_BEFORE = 0;
+const INITIAL_TOTAL_WEEKS = 52;
+const EXTEND_WEEKS = 12;
+const SCROLL_THRESHOLD = 300; // px from edge to trigger extend
+const COL_WIDTH = 40;
+
 export default function PtoGrid({ teams, members, ptoEntries, onDataChange, onMemberAdded }: PtoGridProps) {
   const [startDate, setStartDate] = useState(() => {
     const now = new Date();
     const day = now.getDay();
     const diff = day === 0 ? -6 : 1 - day;
-    return addDays(now, diff);
+    return addDays(now, diff - INITIAL_WEEKS_BEFORE * 7);
   });
-  const [numWeeks, setNumWeeks] = useState(4);
+  const [numWeeks, setNumWeeks] = useState(INITIAL_TOTAL_WEEKS);
   const [dragState, setDragState] = useState<{ memberId: string; startIdx: number; endIdx: number } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ entryId: string; memberName: string; startDate: string; endDate: string } | null>(null);
   const isDragging = useRef(false);
+  const gridRef = useRef<HTMLDivElement>(null);
+  const hasScrolledToToday = useRef(false);
 
   const days = getGridDays(startDate, numWeeks);
   const monthHeaders = getMonthHeaders(days);
@@ -50,6 +59,57 @@ export default function PtoGrid({ teams, members, ptoEntries, onDataChange, onMe
     team,
     members: members.filter((m) => m.team_id === team.id).sort((a, b) => a.name.localeCompare(b.name)),
   }));
+
+  // Scroll to today on first render
+  useEffect(() => {
+    if (hasScrolledToToday.current || !gridRef.current) return;
+    const todayIdx = days.findIndex((d) => isToday(d));
+    if (todayIdx >= 0) {
+      const nameColWidth = 210;
+      const scrollTo = todayIdx * COL_WIDTH - gridRef.current.clientWidth / 2 + nameColWidth;
+      gridRef.current.scrollLeft = Math.max(0, scrollTo);
+      hasScrolledToToday.current = true;
+    }
+  }, [days]);
+
+  // Extend timeline when scrolling near edges
+  useEffect(() => {
+    const grid = gridRef.current;
+    if (!grid) return;
+
+    const handleScroll = () => {
+      const { scrollLeft, scrollWidth, clientWidth } = grid;
+
+      // Near right edge — add weeks to the future
+      if (scrollWidth - scrollLeft - clientWidth < SCROLL_THRESHOLD) {
+        setNumWeeks((prev) => prev + EXTEND_WEEKS);
+      }
+
+      // Near left edge — add weeks to the past
+      if (scrollLeft < SCROLL_THRESHOLD) {
+        const addDays_ = EXTEND_WEEKS * 7;
+        setStartDate((prev) => addDays(prev, -addDays_));
+        setNumWeeks((prev) => prev + EXTEND_WEEKS);
+        // Preserve scroll position
+        requestAnimationFrame(() => {
+          grid.scrollLeft += addDays_ * COL_WIDTH;
+        });
+      }
+    };
+
+    grid.addEventListener("scroll", handleScroll, { passive: true });
+    return () => grid.removeEventListener("scroll", handleScroll);
+  }, []);
+
+  const scrollToToday = () => {
+    if (!gridRef.current) return;
+    const todayIdx = days.findIndex((d) => isToday(d));
+    if (todayIdx >= 0) {
+      const nameColWidth = 210;
+      const scrollTo = todayIdx * COL_WIDTH - gridRef.current.clientWidth / 2 + nameColWidth;
+      gridRef.current.scrollTo({ left: Math.max(0, scrollTo), behavior: "smooth" });
+    }
+  };
 
   const getPtoForCell = useCallback(
     (memberId: string, date: Date): PtoEntry | undefined =>
@@ -124,60 +184,24 @@ export default function PtoGrid({ teams, members, ptoEntries, onDataChange, onMe
     return () => window.removeEventListener("mouseup", h);
   });
 
-  const navigate = (d: number) => setStartDate((prev) => addDays(prev, d * 7));
-  const goToToday = () => {
-    const now = new Date(); const day = now.getDay(); const diff = day === 0 ? -6 : 1 - day;
-    setStartDate(addDays(now, diff));
-  };
-
   return (
     <div>
       {/* Toolbar */}
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-1">
-          <button onClick={() => navigate(-1)} className="btn btn-ghost">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="15 18 9 12 15 6" /></svg>
-          </button>
-          <button onClick={goToToday} className="btn btn-primary text-[11px]">Today</button>
-          <button onClick={() => navigate(1)} className="btn btn-ghost">
-            <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="9 18 15 12 9 6" /></svg>
-          </button>
-
-          <div className="w-px h-4 mx-2 bg-black/[.06]" />
-
-          <input
-            type="date"
-            value={format(startDate, "yyyy-MM-dd")}
-            onChange={(e) => {
-              if (!e.target.value) return;
-              const picked = new Date(e.target.value + "T00:00:00");
-              const day = picked.getDay(); const diff = day === 0 ? -6 : 1 - day;
-              setStartDate(addDays(picked, diff));
-            }}
-            className="form-input text-[12px]"
-          />
-
+          <button onClick={scrollToToday} className="btn btn-primary text-[11px]">Today</button>
           <span className="text-[12px] font-medium text-[#BBB] ml-2">
-            {format(days[0], "MMM d")} &mdash; {format(days[days.length - 1], "MMM d, yyyy")}
+            Scroll to navigate
           </span>
         </div>
 
         <div className="flex items-center gap-2">
           <AddMember teams={teams} onMemberAdded={onMemberAdded} />
-          <div className="w-px h-4 bg-black/[.06]" />
-          <select value={numWeeks} onChange={(e) => setNumWeeks(Number(e.target.value))} className="form-select text-[12px]">
-            <option value={2}>2 wk</option>
-            <option value={3}>3 wk</option>
-            <option value={4}>4 wk</option>
-            <option value={6}>6 wk</option>
-            <option value={8}>8 wk</option>
-            <option value={12}>12 wk</option>
-          </select>
         </div>
       </div>
 
       {/* Grid */}
-      <div className="pto-grid">
+      <div className="pto-grid" ref={gridRef}>
         <table>
           <thead>
             <tr>
@@ -200,13 +224,16 @@ export default function PtoGrid({ teams, members, ptoEntries, onDataChange, onMe
             {membersByTeam.map(({ team, members: tm }) => (
               <Fragment key={team.id}>
                 <tr className="team-header-row">
-                  <td colSpan={days.length + 1} className="team-header">
+                  <td className="team-header">
                     <span className="inline-flex items-center gap-2">
                       <span className="w-[6px] h-[6px] rounded-full" style={{ background: TEAM_COLORS[team.name] || "#999" }} />
                       {team.name}
                       <span className="text-[#CCC] font-medium">{tm.length}</span>
                     </span>
                   </td>
+                  {days.map((_, i) => (
+                    <td key={i} className="team-header-cell" />
+                  ))}
                 </tr>
                 {tm.map((member) => (
                   <tr key={member.id}>
@@ -258,7 +285,7 @@ export default function PtoGrid({ teams, members, ptoEntries, onDataChange, onMe
       {/* Legend */}
       <div className="flex items-center gap-5 mt-3 px-1">
         <div className="flex items-center gap-1.5">
-          <div className="w-5 h-[10px] rounded-sm bg-[#111]" />
+          <div className="w-5 h-[10px] rounded-[4px]" style={{ background: 'linear-gradient(180deg, #D8D6EE, #C0BED8)', borderTop: '1px solid rgba(255,255,255,.5)', boxShadow: '0 1px 2px rgba(0,0,0,.06)' }} />
           <span className="text-[10px] font-medium text-[#BBB]">PTO</span>
         </div>
         <div className="flex items-center gap-1.5">

@@ -57,28 +57,28 @@ export default function Home() {
 
             <div className="h-4 w-px bg-black/[.08]" />
 
-            <span className="text-[12px] font-medium text-[#999]">
-              {outTodayMembers.length > 0 ? (
-                <>
-                  <span className="text-[#111] font-semibold">{outTodayMembers.length}</span> out today
-                  {outTodayMembers.length <= 4 && (
-                    <span className="text-[#CCC]">
-                      {" "}&mdash; {outTodayMembers.map((m) => m.name.split(" ")[0]).join(", ")}
-                    </span>
-                  )}
-                </>
-              ) : (
-                <span className="text-[#10B981]">Full team today</span>
-              )}
-            </span>
+            <div className="flex items-center gap-1">
+              <Link href="/dashboard" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Dashboard</Link>
+              <Link href="/" className="text-[12px] font-semibold text-[#111] px-3 py-1.5 rounded-md bg-black/[.04]">Calendar</Link>
+              <Link href="/history" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">History</Link>
+            </div>
+
           </div>
 
-          <Link href="/history" className="btn btn-ghost text-[12px]">
-            History
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
-              <polyline points="9 18 15 12 9 6" />
-            </svg>
-          </Link>
+          <span className="text-[12px] font-medium text-[#999]">
+            {outTodayMembers.length > 0 ? (
+              <>
+                <span className="text-[#111] font-semibold">{outTodayMembers.length}</span> out today
+                {outTodayMembers.length <= 4 && (
+                  <span className="text-[#CCC]">
+                    {" "}&mdash; {outTodayMembers.map((m) => m.name.split(" ")[0]).join(", ")}
+                  </span>
+                )}
+              </>
+            ) : (
+              <span className="text-[#10B981]">Full team today</span>
+            )}
+          </span>
         </div>
       </header>
 

@@ -133,31 +133,62 @@ body {
 
 .pto-grid .day-col.pto .pto-bar {
   position: absolute;
-  inset: 6px 1px;
-  background: #111;
-  border-radius: 5px;
-  transition: transform 0.2s cubic-bezier(.34,1.56,.64,1), box-shadow 0.2s;
+  top: 10px;
+  bottom: 10px;
+  left: 0;
+  right: 0;
+  background: linear-gradient(180deg, #D8D6EE 0%, #C0BED8 100%);
+  border-radius: 0;
+  border-top: 1px solid rgba(255,255,255,.6);
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  box-shadow:
+    0 1px 3px rgba(0,0,0,.06),
+    inset 0 1px 0 rgba(255,255,255,.4);
+  transition: all 0.2s cubic-bezier(.34,1.56,.64,1);
 }
 
 .pto-grid .day-col.pto:hover .pto-bar {
   transform: scaleY(1.15);
-  box-shadow: 0 4px 12px rgba(0,0,0,.15);
+  background: linear-gradient(180deg, #E4E2F4 0%, #CCC9E4 100%);
+  box-shadow:
+    0 4px 14px rgba(120,110,180,.18),
+    inset 0 1px 0 rgba(255,255,255,.5);
 }
 
-.pto-grid .day-col.pto-start .pto-bar { border-radius: 5px 2px 2px 5px; left: 5px; right: 0; }
-.pto-grid .day-col.pto-mid .pto-bar { border-radius: 0; left: 0; right: 0; }
-.pto-grid .day-col.pto-end .pto-bar { border-radius: 2px 5px 5px 2px; left: 0; right: 5px; }
+.pto-grid .day-col.pto-start .pto-bar {
+  border-radius: 20px 0 0 20px;
+  left: 4px;
+  border-left: 1px solid rgba(255,255,255,.5);
+}
+
+.pto-grid .day-col.pto-mid .pto-bar {
+  border-radius: 0;
+  left: 0; right: 0;
+}
+
+.pto-grid .day-col.pto-end .pto-bar {
+  border-radius: 0 20px 20px 0;
+  right: 4px;
+  border-right: 1px solid rgba(0,0,0,.04);
+}
+
+.pto-grid .day-col.pto-single .pto-bar {
+  border-radius: 20px;
+  left: 4px; right: 4px;
+  border-left: 1px solid rgba(255,255,255,.5);
+  border-right: 1px solid rgba(0,0,0,.04);
+}
 .pto-grid .day-col.pto-single .pto-bar { border-radius: 5px; left: 5px; right: 5px; }
 
 /* Selecting */
-.pto-grid .day-col.selecting { background: #F0EDFF; }
+.pto-grid .day-col.selecting { background: #F3F1FF; }
 
 .pto-grid .day-col.selecting .select-bar {
   position: absolute;
-  inset: 6px 1px;
-  background: rgba(99,102,241,.12);
-  border: 2px dashed rgba(99,102,241,.4);
-  border-radius: 5px;
+  top: 10px; bottom: 10px; left: 0; right: 0;
+  background: linear-gradient(180deg, rgba(200,198,224,.25) 0%, rgba(184,182,212,.15) 100%);
+  border: 2px dashed rgba(180,176,220,.4);
+  border-radius: 20px;
   animation: selectPulse 1.2s ease-in-out infinite;
 }
 
@@ -168,23 +199,31 @@ body {
 
 /* Team headers */
 .pto-grid .team-header {
-  background: #FAFBFD;
+  background: #F0F1F6;
   font-weight: 700;
-  font-size: 10px;
+  font-size: 11px;
   text-transform: uppercase;
   letter-spacing: 0.1em;
   text-align: left;
-  padding: 10px 20px;
+  padding: 12px 20px;
   position: sticky;
   left: 0;
-  color: #888;
+  z-index: 20;
+  color: #555;
+  min-width: 210px;
+  width: 210px;
+  white-space: nowrap;
   border-right: 1px solid rgba(0,0,0,.05);
-  border-bottom: 1px solid rgba(0,0,0,.04);
+  border-top: 1px solid rgba(0,0,0,.06);
+  border-bottom: 1px solid rgba(0,0,0,.06);
 }
 
-.pto-grid .team-header-row td {
-  background: #FAFBFD;
-  border-bottom: 1px solid rgba(0,0,0,.04);
+.pto-grid .team-header-row td.team-header-cell {
+  background: #F0F1F6;
+  border-top: 1px solid rgba(0,0,0,.06);
+  border-bottom: 1px solid rgba(0,0,0,.06);
+  padding: 0;
+  height: 0;
 }
 
 /* Day headers */
