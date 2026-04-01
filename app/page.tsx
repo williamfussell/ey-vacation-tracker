@@ -4,6 +4,7 @@ import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/lib/supabase";
 import type { Team, Member, PtoEntry } from "@/lib/types";
 import PtoGrid from "@/components/PtoGrid";
+import MobileCalendar from "@/components/MobileCalendar";
 import Link from "next/link";
 
 export default function Home() {
@@ -48,42 +49,50 @@ export default function Home() {
     <div className="min-h-screen animate-fadeIn">
       {/* Header */}
       <header className="border-b border-black/[.06]">
-        <div className="max-w-[1520px] mx-auto px-8 flex items-center justify-between h-14">
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-2.5">
-              <img src="/ey-logo.png" alt="EY" className="h-7 w-auto" />
-              <span className="text-[14px] font-semibold text-[#111] tracking-tight">FlexiGenAI Team Tracker</span>
+        <div className="max-w-[1520px] mx-auto px-4 md:px-8 flex items-center justify-between h-14">
+          <div className="flex items-center gap-3 md:gap-5">
+            <div className="flex items-center gap-2">
+              <img src="/ey-logo.png" alt="EY" className="h-6 md:h-7 w-auto" />
+              <span className="text-[13px] md:text-[14px] font-semibold text-[#111] tracking-tight hidden sm:inline">FlexiGenAI Team Tracker</span>
+              <span className="text-[13px] font-semibold text-[#111] tracking-tight sm:hidden">FlexiGenAI</span>
             </div>
 
-            <div className="h-4 w-px bg-black/[.08]" />
+            <div className="h-4 w-px bg-black/[.08] hidden md:block" />
 
-            <div className="flex items-center gap-1">
-              <Link href="/dashboard" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Dashboard</Link>
-              <Link href="/" className="text-[12px] font-semibold text-[#111] px-3 py-1.5 rounded-md bg-black/[.04]">Calendar</Link>
-              <Link href="/history" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">History</Link>
+            <div className="flex items-center gap-0.5 md:gap-1">
+              <Link href="/dashboard" className="text-[11px] md:text-[12px] font-medium text-[#999] px-2 md:px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Dashboard</Link>
+              <Link href="/" className="text-[11px] md:text-[12px] font-semibold text-[#111] px-2 md:px-3 py-1.5 rounded-md bg-black/[.04]">Calendar</Link>
+              <Link href="/history" className="text-[11px] md:text-[12px] font-medium text-[#999] px-2 md:px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">History</Link>
             </div>
 
           </div>
 
-          <span className="text-[12px] font-medium text-[#999]">
+          <span className="text-[11px] md:text-[12px] font-medium text-[#999] hidden sm:inline">
             {outTodayMembers.length > 0 ? (
               <>
                 <span className="text-[#111] font-semibold">{outTodayMembers.length}</span> out today
-                {outTodayMembers.length <= 4 && (
-                  <span className="text-[#CCC]">
-                    {" "}&mdash; {outTodayMembers.map((m) => m.name.split(" ")[0]).join(", ")}
-                  </span>
-                )}
               </>
             ) : (
-              <span className="text-[#10B981]">Full team today</span>
+              <span className="text-[#10B981]">Full team</span>
             )}
           </span>
         </div>
       </header>
 
-      <main className="max-w-[1520px] mx-auto px-8 pt-5 pb-8 animate-slideUp">
+      {/* Desktop: grid */}
+      <main className="hidden md:block max-w-[1520px] mx-auto px-8 pt-5 pb-8 animate-slideUp">
         <PtoGrid
+          teams={teams}
+          members={members}
+          ptoEntries={ptoEntries}
+          onDataChange={fetchData}
+          onMemberAdded={fetchData}
+        />
+      </main>
+
+      {/* Mobile: list view */}
+      <main className="md:hidden px-4 pt-4 pb-8 animate-slideUp">
+        <MobileCalendar
           teams={teams}
           members={members}
           ptoEntries={ptoEntries}

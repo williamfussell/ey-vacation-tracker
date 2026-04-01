@@ -47,29 +47,30 @@ export default function HistoryPage() {
   return (
     <div className="min-h-screen animate-fadeIn">
       <header className="border-b border-black/[.06]">
-        <div className="max-w-4xl mx-auto px-8 flex items-center justify-between h-14">
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-2.5">
-              <img src="/ey-logo.png" alt="EY" className="h-7 w-auto" />
-              <span className="text-[14px] font-semibold text-[#111] tracking-tight">FlexiGenAI Team Tracker</span>
+        <div className="max-w-4xl mx-auto px-4 md:px-8 flex items-center justify-between h-14">
+          <div className="flex items-center gap-3 md:gap-5">
+            <div className="flex items-center gap-2">
+              <img src="/ey-logo.png" alt="EY" className="h-6 md:h-7 w-auto" />
+              <span className="text-[13px] md:text-[14px] font-semibold text-[#111] tracking-tight hidden sm:inline">FlexiGenAI Team Tracker</span>
+              <span className="text-[13px] font-semibold text-[#111] tracking-tight sm:hidden">FlexiGenAI</span>
             </div>
-            <div className="h-4 w-px bg-black/[.08]" />
-            <div className="flex items-center gap-1">
-              <Link href="/dashboard" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Dashboard</Link>
-              <Link href="/" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Calendar</Link>
-              <Link href="/history" className="text-[12px] font-semibold text-[#111] px-3 py-1.5 rounded-md bg-black/[.04]">History</Link>
+            <div className="h-4 w-px bg-black/[.08] hidden md:block" />
+            <div className="flex items-center gap-0.5 md:gap-1">
+              <Link href="/dashboard" className="text-[11px] md:text-[12px] font-medium text-[#999] px-2 md:px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Dashboard</Link>
+              <Link href="/" className="text-[11px] md:text-[12px] font-medium text-[#999] px-2 md:px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Calendar</Link>
+              <Link href="/history" className="text-[11px] md:text-[12px] font-semibold text-[#111] px-2 md:px-3 py-1.5 rounded-md bg-black/[.04]">History</Link>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-4xl mx-auto px-8 pt-5 pb-8 animate-slideUp">
+      <main className="max-w-4xl mx-auto px-4 md:px-8 pt-5 pb-8 animate-slideUp">
         {logs.length === 0 ? (
           <div className="text-center py-20 bg-white rounded-xl border border-black/[.06]">
             <p className="text-[13px] font-medium text-[#999]">No edits yet</p>
           </div>
         ) : (
-          <div className="bg-white rounded-xl border border-black/[.08] overflow-hidden" style={{ boxShadow: '0 1px 3px rgba(0,0,0,.03)' }}>
+          <div className="bg-white rounded-xl border border-black/[.08] overflow-x-auto" style={{ boxShadow: '0 1px 3px rgba(0,0,0,.03)' }}>
             <table className="w-full">
               <thead>
                 <tr className="border-b border-black/[.06]">

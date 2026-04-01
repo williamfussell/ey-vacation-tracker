@@ -189,25 +189,26 @@ export default function DashboardPage() {
   return (
     <div className="min-h-screen animate-fadeIn">
       <header className="border-b border-black/[.06]">
-        <div className="max-w-[1520px] mx-auto px-8 flex items-center justify-between h-14">
-          <div className="flex items-center gap-5">
-            <div className="flex items-center gap-2.5">
-              <img src="/ey-logo.png" alt="EY" className="h-7 w-auto" />
-              <span className="text-[14px] font-semibold text-[#111] tracking-tight">FlexiGenAI Team Tracker</span>
+        <div className="max-w-[1520px] mx-auto px-4 md:px-8 flex items-center justify-between h-14">
+          <div className="flex items-center gap-3 md:gap-5">
+            <div className="flex items-center gap-2">
+              <img src="/ey-logo.png" alt="EY" className="h-6 md:h-7 w-auto" />
+              <span className="text-[13px] md:text-[14px] font-semibold text-[#111] tracking-tight hidden sm:inline">FlexiGenAI Team Tracker</span>
+              <span className="text-[13px] font-semibold text-[#111] tracking-tight sm:hidden">FlexiGenAI</span>
             </div>
-            <div className="h-4 w-px bg-black/[.08]" />
-            <div className="flex items-center gap-1">
-              <Link href="/dashboard" className="text-[12px] font-semibold text-[#111] px-3 py-1.5 rounded-md bg-black/[.04]">Dashboard</Link>
-              <Link href="/" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Calendar</Link>
-              <Link href="/history" className="text-[12px] font-medium text-[#999] px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">History</Link>
+            <div className="h-4 w-px bg-black/[.08] hidden md:block" />
+            <div className="flex items-center gap-0.5 md:gap-1">
+              <Link href="/dashboard" className="text-[11px] md:text-[12px] font-semibold text-[#111] px-2 md:px-3 py-1.5 rounded-md bg-black/[.04]">Dashboard</Link>
+              <Link href="/" className="text-[11px] md:text-[12px] font-medium text-[#999] px-2 md:px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">Calendar</Link>
+              <Link href="/history" className="text-[11px] md:text-[12px] font-medium text-[#999] px-2 md:px-3 py-1.5 rounded-md hover:text-[#555] transition-colors">History</Link>
             </div>
           </div>
         </div>
       </header>
 
-      <main className="max-w-[1520px] mx-auto px-8 pt-6 pb-12 animate-slideUp">
+      <main className="max-w-[1520px] mx-auto px-4 md:px-8 pt-6 pb-12 animate-slideUp">
         {/* Status cards */}
-        <div className="grid grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-3 md:gap-4 mb-6">
           {/* Out today */}
           <div
             className="bg-white rounded-xl border border-black/[.06] p-5 cursor-pointer transition-all hover:border-black/[.12]"
@@ -343,7 +344,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Charts row */}
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4 mb-6">
           {/* 14-day forecast */}
           <div className="col-span-2 bg-white rounded-xl border border-black/[.06] p-5" style={{ boxShadow: '0 1px 3px rgba(0,0,0,.03)' }}>
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#999]">Next 14 Days — People Out</span>
@@ -414,7 +415,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Bottom row */}
-        <div className="grid grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-3 md:gap-4">
           {/* PTO by team bar chart */}
           <div className="bg-white rounded-xl border border-black/[.06] p-5" style={{ boxShadow: '0 1px 3px rgba(0,0,0,.03)' }}>
             <span className="text-[10px] font-bold uppercase tracking-wider text-[#999]">Total PTO Days by Team</span>
