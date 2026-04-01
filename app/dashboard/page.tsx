@@ -359,8 +359,8 @@ export default function DashboardPage() {
                   <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: '#BBB' }} axisLine={false} tickLine={false} width={24} />
                   <Tooltip
                     contentStyle={{ fontSize: 12, borderRadius: 8, border: '1px solid rgba(0,0,0,.08)', boxShadow: '0 4px 12px rgba(0,0,0,.08)' }}
-                    formatter={(value: number) => [`${value} people`, 'Out']}
-                    labelFormatter={(label: string) => label}
+                    formatter={(value) => [`${value} people`, 'Out']}
+                    labelFormatter={(label) => String(label)}
                   />
                   <Area type="monotone" dataKey="count" stroke="#8B5CF6" strokeWidth={2} fill="url(#areaGrad)" />
                 </AreaChart>
@@ -392,7 +392,7 @@ export default function DashboardPage() {
                     </Pie>
                     <Tooltip
                       contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid rgba(0,0,0,.08)' }}
-                      formatter={(value: number, name: string) => [`${value} available`, name]}
+                      formatter={(value, name) => [`${value} available`, name]}
                     />
                   </PieChart>
                 </ResponsiveContainer>
@@ -424,7 +424,7 @@ export default function DashboardPage() {
                   <YAxis type="category" dataKey="name" tick={{ fontSize: 10, fill: '#888' }} axisLine={false} tickLine={false} width={80} />
                   <Tooltip
                     contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid rgba(0,0,0,.08)' }}
-                    formatter={(value: number) => [`${value} days`, 'PTO']}
+                    formatter={(value) => [`${value} days`, 'PTO']}
                   />
                   <Bar dataKey="days" radius={[0, 4, 4, 0]}>
                     {ptoByTeam.map((entry, i) => (
@@ -446,7 +446,7 @@ export default function DashboardPage() {
                   <YAxis allowDecimals={false} tick={{ fontSize: 10, fill: '#BBB' }} axisLine={false} tickLine={false} width={24} />
                   <Tooltip
                     contentStyle={{ fontSize: 11, borderRadius: 8, border: '1px solid rgba(0,0,0,.08)' }}
-                    formatter={(value: number) => [`${value} days`, 'PTO']}
+                    formatter={(value) => [`${value} days`, 'PTO']}
                   />
                   <Bar dataKey="days" fill="#111" radius={[4, 4, 0, 0]} />
                 </BarChart>
