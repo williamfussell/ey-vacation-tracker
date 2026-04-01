@@ -16,9 +16,10 @@ const TEAM_COLORS: Record<string, string> = {
   Backend: "#3B82F6",
   Frontend: "#F59E0B",
   DevOps: "#10B981",
+  Testing: "#F43F5E",
 };
 
-const CHART_COLORS = ["#8B5CF6", "#3B82F6", "#F59E0B", "#10B981"];
+const CHART_COLORS = ["#8B5CF6", "#3B82F6", "#F59E0B", "#10B981", "#F43F5E"];
 
 export default function DashboardPage() {
   const [teams, setTeams] = useState<Team[]>([]);

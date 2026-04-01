@@ -30,6 +30,7 @@ const TEAM_COLORS: Record<string, string> = {
   Backend: "#3B82F6",
   Frontend: "#F59E0B",
   DevOps: "#10B981",
+  Testing: "#F43F5E",
 };
 
 // Start at current week, extend 52 weeks forward
