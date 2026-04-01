@@ -66,6 +66,7 @@ alter table edit_log enable row level security;
 create policy "Public read teams" on teams for select using (true);
 create policy "Public read members" on members for select using (true);
 create policy "Public insert members" on members for insert with check (true);
+create policy "Public delete members" on members for delete using (true);
 create policy "Public read pto" on pto_entries for select using (true);
 create policy "Public insert pto" on pto_entries for insert with check (true);
 create policy "Public delete pto" on pto_entries for delete using (true);

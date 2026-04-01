@@ -49,6 +49,7 @@ export default function PtoGrid({ teams, members, ptoEntries, onDataChange, onMe
   const [numWeeks, setNumWeeks] = useState(INITIAL_TOTAL_WEEKS);
   const [dragState, setDragState] = useState<{ memberId: string; startIdx: number; endIdx: number } | null>(null);
   const [confirmDelete, setConfirmDelete] = useState<{ entryId: string; memberName: string; startDate: string; endDate: string } | null>(null);
+  const [confirmRemoveMember, setConfirmRemoveMember] = useState<{ id: string; name: string } | null>(null);
   const isDragging = useRef(false);
   const gridRef = useRef<HTMLDivElement>(null);
   const hasScrolledToToday = useRef(false);
@@ -178,6 +179,14 @@ export default function PtoGrid({ teams, members, ptoEntries, onDataChange, onMe
     setConfirmDelete(null);
   };
 
+  const handleRemoveMember = async () => {
+    if (!confirmRemoveMember) return;
+    await supabase.from("pto_entries").delete().eq("member_id", confirmRemoveMember.id);
+    await supabase.from("members").delete().eq("id", confirmRemoveMember.id);
+    setConfirmRemoveMember(null);
+    onDataChange();
+  };
+
   useEffect(() => {
     const h = () => { if (isDragging.current) handleMouseUp(); };
     window.addEventListener("mouseup", h);
@@ -237,7 +246,20 @@ export default function PtoGrid({ teams, members, ptoEntries, onDataChange, onMe
                 </tr>
                 {tm.map((member) => (
                   <tr key={member.id}>
-                    <td className="name-col"><div className="flex items-center h-[42px]">{member.name}</div></td>
+                    <td className="name-col">
+                      <div className="flex items-center justify-between h-[42px] group">
+                        <span>{member.name}</span>
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setConfirmRemoveMember({ id: member.id, name: member.name }); }}
+                          className="opacity-0 group-hover:opacity-100 transition-opacity p-1 rounded hover:bg-red-50"
+                          title="Remove member"
+                        >
+                          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#DC2626" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+                          </svg>
+                        </button>
+                      </div>
+                    </td>
                     {days.map((day, dayIdx) => {
                       const pto = getPtoForCell(member.id, day);
                       const ptoPos = getPtoPosition(member.id, day);
@@ -277,6 +299,23 @@ export default function PtoGrid({ teams, members, ptoEntries, onDataChange, onMe
             <div className="flex gap-2 justify-end">
               <button onClick={() => setConfirmDelete(null)} className="btn btn-secondary text-[12px]">Cancel</button>
               <button onClick={handleDelete} className="btn btn-danger text-[12px]">Remove</button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Remove member modal */}
+      {confirmRemoveMember && (
+        <div className="fixed inset-0 modal-overlay flex items-center justify-center z-50">
+          <div className="modal-card p-6 w-[380px] mx-4 animate-scaleIn">
+            <h3 className="text-[14px] font-semibold text-[#111] mb-1">Remove team member</h3>
+            <p className="text-[12px] text-[#999] mb-4">This will also delete all their PTO entries.</p>
+            <p className="text-[13px] text-[#444] leading-relaxed mb-5">
+              Remove <strong className="text-[#111]">{confirmRemoveMember.name}</strong> from the tracker?
+            </p>
+            <div className="flex gap-2 justify-end">
+              <button onClick={() => setConfirmRemoveMember(null)} className="btn btn-secondary text-[12px]">Cancel</button>
+              <button onClick={handleRemoveMember} className="btn btn-danger text-[12px]">Remove</button>
             </div>
           </div>
         </div>
