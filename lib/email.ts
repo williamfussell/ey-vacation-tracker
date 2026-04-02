@@ -1,31 +1,33 @@
-import { Resend } from "resend";
+const POWER_AUTOMATE_URL = process.env.POWER_AUTOMATE_WEBHOOK_URL;
 
 export async function sendEmail(
   subject: string,
-  htmlBody: string
+  htmlBody: string,
+  pdfBase64?: string,
+  pdfFilename?: string
 ): Promise<boolean> {
-  const apiKey = process.env.RESEND_API_KEY;
-  const to = process.env.NOTIFICATION_EMAIL_TO;
-  const from = process.env.NOTIFICATION_EMAIL_FROM || "vacations@yourdomain.com";
-
-  if (!apiKey || !to) {
-    console.error("RESEND_API_KEY or NOTIFICATION_EMAIL_TO not configured");
+  if (!POWER_AUTOMATE_URL) {
+    console.error("POWER_AUTOMATE_WEBHOOK_URL not configured");
     return false;
   }
 
   try {
-    const resend = new Resend(apiKey);
-    const { error } = await resend.emails.send({
-      from,
-      to: to.split(",").map((e) => e.trim()),
+    const payload: Record<string, string> = {
       subject,
-      html: htmlBody,
-    });
-    if (error) {
-      console.error("Failed to send email:", error);
-      return false;
+      body: htmlBody,
+    };
+
+    if (pdfBase64 && pdfFilename) {
+      payload.attachmentContent = pdfBase64;
+      payload.attachmentName = pdfFilename;
     }
-    return true;
+
+    const response = await fetch(POWER_AUTOMATE_URL, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    });
+    return response.status === 200 || response.status === 202;
   } catch (error) {
     console.error("Failed to send email:", error);
     return false;
