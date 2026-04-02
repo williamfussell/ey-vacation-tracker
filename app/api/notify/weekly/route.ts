@@ -1,8 +1,8 @@
 import { NextRequest } from "next/server";
 import { getWeekSummary, getTotalMembers, getTeamAvailability } from "@/lib/notifications";
-import { generateWeeklyPdf } from "@/lib/pdf-report";
+import { generateWeeklyEmailImage } from "@/lib/email-image";
 import { sendEmail } from "@/lib/email";
-import { format, startOfWeek, addDays } from "date-fns";
+import { format, startOfWeek, addDays, eachDayOfInterval } from "date-fns";
 
 export async function GET(request: NextRequest) {
   const authHeader = request.headers.get("authorization");
@@ -20,21 +20,31 @@ export async function GET(request: NextRequest) {
   const friday = addDays(monday, 4);
   const weekLabel = `${format(monday, "MMM d")} – ${format(friday, "MMM d, yyyy")}`;
 
-  const subject = `FlexiGenAI — Week of ${weekLabel}`;
+  // Build week days array for image
+  const days = eachDayOfInterval({ start: monday, end: friday });
+  const weekDays = days.map((d) => {
+    const dayLabel = format(d, "EEEE, MMM d");
+    return {
+      label: dayLabel,
+      members: weekSummary.get(dayLabel) || [],
+    };
+  });
 
-  const pdfBuffer = await generateWeeklyPdf(weekSummary, totalMembers, teamAvail);
-  const pdfBase64 = pdfBuffer.toString("base64");
-  const filename = `flexigenai-weekly-${format(monday, "yyyy-MM-dd")}.pdf`;
+  const png = await generateWeeklyEmailImage(weekDays, totalMembers, teamAvail, weekLabel);
+  const pngBase64 = png.toString("base64");
 
-  const body = `<div style="font-family:-apple-system,sans-serif;font-size:14px;color:#333;">
-    <p>Here's your weekly team tracker digest — report attached.</p>
-    <p style="color:#888;font-size:12px;">
-      <a href="https://ey-vacation-tracker.vercel.app/dashboard" style="color:#111;font-weight:600;">Open Dashboard</a> ·
-      <a href="https://ey-vacation-tracker.vercel.app" style="color:#888;">View Calendar</a>
+  const subject = `Team Weekly PTO Digest — ${weekLabel}`;
+
+  const body = `<div style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;">
+    <img src="data:image/png;base64,${pngBase64}" width="600" style="width:100%;height:auto;display:block;border-radius:8px;" alt="Weekly Team Report" />
+    <p style="text-align:center;margin-top:16px;">
+      <a href="https://ey-vacation-tracker.vercel.app/dashboard" style="color:#111;font-size:13px;font-weight:600;text-decoration:none;">Open Dashboard</a>
+      <span style="color:#ddd;margin:0 8px;">|</span>
+      <a href="https://ey-vacation-tracker.vercel.app" style="color:#999;font-size:13px;text-decoration:none;">View Calendar</a>
     </p>
   </div>`;
 
-  const sent = await sendEmail(subject, body, pdfBase64, filename);
+  const sent = await sendEmail(subject, body);
 
   return Response.json({ success: sent, daysWithAbsences: weekSummary.size });
 }

@@ -25,8 +25,8 @@ export async function GET(request: NextRequest) {
   const pngBase64 = png.toString("base64");
 
   const subject = outToday.length > 0
-    ? `FlexiGenAI — ${outToday.length} out today`
-    : "FlexiGenAI — Full team today";
+    ? `Team Daily PTO Update — ${outToday.length} out today`
+    : "Team Daily PTO Update — Full team today";
 
   const body = `<div style="font-family:-apple-system,sans-serif;max-width:600px;margin:0 auto;">
     <img src="data:image/png;base64,${pngBase64}" width="600" style="width:100%;height:auto;display:block;border-radius:8px;" alt="Daily Team Report" />
